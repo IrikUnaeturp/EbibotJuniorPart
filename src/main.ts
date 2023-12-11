@@ -1,6 +1,5 @@
-import createBinanceClient  from 'binance-api-node';
-const fs = require('fs');
-
+import createBinanceClient from 'binance-api-node';
+import * as fs from 'fs';
 const creds = JSON.parse(fs.readFileSync('creds.json', 'utf8'));
 
 const client = createBinanceClient ({
@@ -11,7 +10,7 @@ const client = createBinanceClient ({
 const baseUrl = 'https://fapi.binance.com';
 
 const getFuturesBTCUSDTBalance = async () => {
-    const futuresAccountBalance = await client.futuresAccountBalance();
+    const futuresAccountBalance = await client.accountBalance();;
     const btcusdtFuturesBalance = parseFloat(futuresAccountBalance.find(b => b.asset === 'BTCUSDT')?.balance || '0');
     return btcusdtFuturesBalance;
 }
@@ -156,7 +155,7 @@ const precisionsFutures = {
     "APEUSDT": { "price": 3, "amount": 0 }
 };
   
-  interface OpenPositionOptions {
+interface OpenPositionOptions {
     symbol: string;
     isLong: boolean;
     deltaTP: number;
@@ -321,3 +320,4 @@ if (tradingSymbol) {
     .then(order => console.log('Position opened:', order))
     .catch(error => console.error('Error:', error));
 }
+
