@@ -1,0 +1,15 @@
+1)скопировать свой тс конфиг
+2)сказаить жпт вот это мой тс конфиг
+3)вот это мой код (маин)
+4)вот у меня есть такая ошибка, от в таком месте
+5)помоги мне, пожалуйста, её исправить 
+
+import createBinanceClient from 'binance-api-node';
+import * as fs from 'fs';
+import { get } from 'http';
+const creds = JSON.parse(fs.readFileSync('creds.json', 'utf8'));
+
+const client = createBinanceClient ({
+    apiKey: creds.key,
+    apiSecret: creds.secret,
+  });

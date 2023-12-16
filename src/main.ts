@@ -1,16 +1,18 @@
 import createBinanceClient from 'binance-api-node';
 import * as fs from 'fs';
+import Binance, { Order } from 'binance-api-node'
+
 const creds = JSON.parse(fs.readFileSync('creds.json', 'utf8'));
 
-const client = createBinanceClient ({
-    apiKey: creds.key,
-    apiSecret: creds.secret,
+const client = createBinanceClient({
+    "apiKey": "fPUE3BDEhIbfKyNpRbHz6VQ6zzcQiqB9MuqyNaElb2QvmUl1RkfGhKrl2QA7KFE8",
+    "apiSecret": "ZcVeRjWzyOYsMUf35GOwPbZhyEOXoJ9tgx2wDAzDX25ixJBhDh2JjBVSgVLGZtmi"
 });
 
 const baseUrl = 'https://fapi.binance.com';
 
 const getFuturesBTCUSDTBalance = async () => {
-    const futuresAccountBalance = await client.accountBalance();;
+    const futuresAccountBalance = await client.futuresAccountBalance();
     const btcusdtFuturesBalance = parseFloat(futuresAccountBalance.find(b => b.asset === 'BTCUSDT')?.balance || '0');
     return btcusdtFuturesBalance;
 }
@@ -168,6 +170,34 @@ interface OpenPositionOptions {
 const adjustPrecision = (value: number, precision: number): number => {
     return parseFloat(value.toFixed(precision));
 }
+
+// Получение текущих ордеров
+const getOpenOrders = async () => {
+    try {
+      const orders = await client.openOrders({
+        symbol: 'BTCUSDT',
+      });
+      console.log('Open orders:', orders);
+    } catch (error) {
+      console.error('Error fetching open orders:', error);
+    }
+  };
+  
+  // Получение текущих позиций
+  const getPositions = async () => {
+    try {
+      const positions = await client.futuresPositionRisk();
+      console.log('Positions:', positions);
+    } catch (error) {
+      console.error('Error fetching positions:', error);
+    }
+  };
+  
+  // Вызов функций для получения ордеров и позиций
+  getOpenOrders();
+  getPositions();
+
+
 
 const cancelAllFuturesOrders = async (symbol: string) => {
     try {
