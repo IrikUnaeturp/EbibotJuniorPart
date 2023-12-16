@@ -2,21 +2,20 @@
     "name": "tg-image-finder",
     "version": "1.0.0",
     "description": "A project to find a rectangle of a specific color in an image",
-    "main": "dist/index.ts",
+    "main": "main/index.ts",
     "scripts": {
-      "build": "tsc",
-      "start": "tsc && node dist/index.ts"
+        "build": "tsc",
+        "start": "tsc && node main/index.ts"
     },
     "dependencies": {
-      "chrome-remote-interface": "^0.33.0",
-      "puppeteer": "^21.5.0"
+        "binance-api-node": "^0.12.7",
+        "chrome-remote-interface": "^0.33.0",
+        "puppeteer": "^21.5.0"
     },
     "devDependencies": {
-      "copy-webpack-plugin": "^11.0.0",
-      "typescript": "^4.5.2",
-      "webpack": "^5.89.0",
-      "webpack-cli": "^5.1.4"
+        "copy-webpack-plugin": "^11.0.0",
+        "typescript": "^4.9.5",
+        "webpack": "^5.89.0",
+        "webpack-cli": "^5.1.4"
     }
-    
-  }
-  
+}

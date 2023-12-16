@@ -1,3 +1,4 @@
+import fetch from 'node-fetch';
 import createBinanceClient  from 'binance-api-node';
 const fs = require('fs');
 
@@ -321,3 +322,25 @@ if (tradingSymbol) {
     .then(order => console.log('Position opened:', order))
     .catch(error => console.error('Error:', error));
 }
+const params = new URLSearchParams();
+params.append('symbol', 'BTCUSDT');
+params.append('side', 'BUY');
+params.append('type', 'LIMIT');
+params.append('timeInForce', 'GTC');
+params.append('quantity', '0.01');
+params.append('price', '40000.0');
+params.append('recvWindow', '5000');
+params.append('timestamp', '253402300799000');
+params.append('signature', '2d24a314');
+
+fetch.post('https://api.binance.com/api/v3/order', params, {
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+  },
+})
+  .then((response) => {
+    console.log(response.data);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
