@@ -4,8 +4,8 @@ const fs = require('fs');
 const creds = JSON.parse(fs.readFileSync('creds.json', 'utf8'));
 
 const client = createBinanceClient ({
-    apiKey: "fPUE3BDEhIbfKyNpRbHz6VQ6zzcQiqB9MuqyNaElb2QvmUl1RkfGhKrl2QA7KFE8" ,
-    apiSecret: "ZcVeRjWzyOYsMUf35GOwPbZhyEOXoJ9tgx2wDAzDX25ixJBhDh2JjBVSgVLGZtmi"
+  apiKey: creds.key,
+  apiSecret: creds.secret,
 });
 
 const baseUrl = 'https://fapi.binance.com';
@@ -323,8 +323,10 @@ if (tradingSymbol) {
 }
 import axios from 'axios';
 import * as crypto from 'crypto';
-const apiKey = "fPUE3BDEhIbfKyNpRbHz6VQ6zzcQiqB9MuqyNaElb2QvmUl1RkfGhKrl2QA7KFE8" 
-const apiSecret= "ZcVeRjWzyOYsMUf35GOwPbZhyEOXoJ9tgx2wDAzDX25ixJBhDh2JjBVSgVLGZtmi"
+const client = createBinanceClient ({
+  apiKey: creds.key,
+  apiSecret: creds.secret,
+})
 
 // Функция для генерации подписи HMAC SHA256
 const generateSignature = (queryString: string) => {
