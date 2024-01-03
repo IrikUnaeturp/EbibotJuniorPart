@@ -8,7 +8,7 @@
         "start": "tsc && node main/index.ts"
     },
     "dependencies": {
-        "axios": "^1.6.2",
+        "axios": "^1.6.3",
         "binance-api-node": "^0.12.7",
         "chrome-remote-interface": "^0.33.0",
         "puppeteer": "^21.5.0"
