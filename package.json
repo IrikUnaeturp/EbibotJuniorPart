@@ -8,11 +8,13 @@
         "start": "tsc && node main/index.ts"
     },
     "dependencies": {
+        "@binance/connector": "^3.1.0",
         "axios": "^1.6.3",
         "binance-api-node": "^0.12.7",
         "ccxt": "^4.2.5",
         "chrome-remote-interface": "^0.33.0",
         "dataframe-js": "^1.4.4",
+        "dotenv": "^16.3.1",
         "node-fetch": "^3.3.2",
         "puppeteer": "^21.5.0"
     },

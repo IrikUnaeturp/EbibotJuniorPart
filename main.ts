@@ -2,12 +2,9 @@ import * as ccxt from 'ccxt';
 import * as crypto from 'crypto';
 //import fetch from 'node-fetch'
 
-const creds = JSON.parse(fs.readFileSync('creds.json', 'utf8'));
 
-const client = createBinanceClient ({
-    apiKey: creds.key,
-    apiSecret: creds.secret,
-});
+const apiKey = "xpW2DQ7XHjrHm9D113h53Du1vPuKfr8lsxT5LXGh6UvYVyp4zT7KXqEpeRNLy4k7";
+const apiSecret = "er0nlJSSFAt4cHhBWrue07jEw19kQXWMcfQbdPLmdd8SQwwkc0CsA0ZhSZF6bdcB";
 
 const placeSpotLimitOrder = async () => {
   const symbol = 'BTCUSDT';
