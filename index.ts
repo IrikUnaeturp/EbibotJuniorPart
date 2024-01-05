@@ -1,86 +1,54 @@
 import * as crypto from 'crypto';
-import axios from 'axios';
-const fs = require('fs');
+import fetch from 'node-fetch';
 
-const creds = JSON.parse(fs.readFileSync('creds.json', 'utf8'));
+const apiKey = "xpW2DQ7XHjrHm9D113h53Du1vPuKfr8lsxT5LXGh6UvYVyp4zT7KXqEpeRNLy4k7";
+const apiSecret = "er0nlJSSFAt4cHhBWrue07jEw19kQXWMcfQbdPLmdd8SQwwkc0CsA0ZhSZF6bdcB";
 
-const client = createBinanceClient ({
-    apiKey: creds.key,
-    apiSecret: creds.secret,
-});
-const baseUrl = 'https://fapi.binance.com';
-
-// Получение времени сервера Binance
-const serverTime = new Date().getTime();
-
-// Запрос на информацию о счете;
-const orderEndpoint1 = '/fapi/v1/account';
-const accountQueryString = `timestamp=${serverTime}`;
-const accountSignature = crypto.createHmac('sha256', apiSecret).update(accountQueryString).digest('hex');
-const accountUrl = `${baseUrl}${orderEndpoint1}?${accountQueryString}&signature=${accountSignature}`;
-
-axios.get(accountUrl, { headers: { 'X-MBX-APIKEY': apiKey } })
-    .then(response => {
-        console.log('Account Info:', response.data);
-    })
-    .catch(error => {
-        console.error('Error fetching account info:', error.response.data);
-    });
-
-// Запрос на размещение ордера
-const orderEndpoint = '/fapi/v1/batchOrders';
-const orders = [
-    {
-        symbol: "BTCUSDT",
-        side: 'BUY',
-        type: 'LIMIT',
-        quantity: 1,
-        price: 40000,
-        leverage: 20,
-        timeInForce: 'GTC',
-    },
-    {
-        symbol: "BTCUSDT",
-        side: 'BUY',
-        type: 'MARKET',
-        quantity: 1,
-        leverage: 20,
-        timestamp: serverTime,
-    },
-    {
-        symbol: "BTCUSDT",
-        side: 'BUY',
-        type: 'STOP_MARKET',
-        quantity: 1,
-        price: 43000,
-        leverage: 20,
-        timeInForce: 'GTC',
-    },
-];
-
-const orderData = {
-    batchOrders: orders,
-    timestamp: serverTime,
+const timestamp = Date.now();
+const params = {
+  symbol: 'BTCUSDT',
+  side: 'SELL',
+  type: 'LIMIT',
+  timeInForce: 'GTC',
+  quantity: '1.0000000',
+  price: '0.20',
+  timestamp: timestamp.toString(),
 };
 
-const orderQueryString = Object.entries(orderData)
-    .map(([key, value]) => `${key}=${encodeURIComponent(JSON.stringify(value))}`)
-    .join('&');
-const orderSignature = crypto.createHmac('sha256', apiSecret).update(orderQueryString).digest('hex');
-const orderUrl = `${baseUrl}${orderEndpoint}?${orderQueryString}&signature=${orderSignature}`;
+const privateKey = `er0nlJSSFAt4cHhBWrue07\n` +
+                   `jEw19kQXWMcfQbdPLmdd8SQ\n` +
+                   `wwkc0CsA0ZhSZF6bdcB`; 
 
-axios.post(
-    orderUrl,
-    null,
-    {
-        headers: {
-            'X-MBX-APIKEY': apiKey,
-        },
-    },
-)
-    .then(response => {
-        console.log('Order Placement Response:', response.data);
-    })
-    .catch(error => {
-        console.error('Error placing order:', error.response.data);
+const signPayload = (privateKey: string, payload: string): string => {
+  const sign = crypto.createSign('RSA-SHA256');
+  sign.write(payload);
+  sign.end();
+  return sign.sign(privateKey, 'base64');
+};
+
+const generateSignature = (queryString: string, apiSecret: string): string => {
+    return crypto.createHmac('sha256', apiSecret).update(queryString).digest('hex');
+  };
+  
+  const signature = generateSignature( 'https://api.binance.com/api/v3/order', apiSecret)
+
+const sendRequest = async () => {
+  try {
+    const headers = {
+      'X-MBX-APIKEY': apiKey,
+    };
+
+    const response = await fetch('https://api.binance.com/api/v3/order', {
+      method: 'POST',
+      headers: headers,
+      body: new URLSearchParams(params),
     });
+
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+sendRequest();

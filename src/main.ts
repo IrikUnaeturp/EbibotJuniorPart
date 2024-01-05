@@ -1,67 +1,71 @@
+
 import * as crypto from 'crypto';
+//import fetch from 'node-fetch'
+const ccxt = require('ccxt');
+
 
 const apiKey = "xpW2DQ7XHjrHm9D113h53Du1vPuKfr8lsxT5LXGh6UvYVyp4zT7KXqEpeRNLy4k7";
 const apiSecret = "er0nlJSSFAt4cHhBWrue07jEw19kQXWMcfQbdPLmdd8SQwwkc0CsA0ZhSZF6bdcB";
-const Url = `https://api.binance.com/api/v3/data?symbol=XRPUSDT&side=BUY&type=LIMIT&timeInForce=GTC&quantity=1&price=0.6&timestamp=${Date.now()}`;
-console.log(Url)
-const generateSignature = (queryString: string) => {
-  return crypto.createHmac('sha256', apiSecret).update(queryString).digest('hex');
-};
 
 const placeSpotLimitOrder = async () => {
-  const symbol = 'XRPUSDT';
+  const symbol = 'BTCUSDT';
   const side = 'BUY';
-  const type = 'LIMIT';
+  const type = 'MARKET';
   const timeInForce = 'GTC';
-  const quantity = '1';
-  const price = '0.6';
+  const quoteOrderQty = '10';
+  //const price = '4500';
+  const recvWindow = '5000';
   const timestamp = Date.now();
 
-  const params = new URLSearchParams();
-  params.append('symbol', symbol);
-  params.append('side', side);
-  params.append('type', type);
-  params.append('timeInForce', timeInForce);
-  params.append('quantity', quantity);
-  params.append('price', price);
-  params.append('timestamp', timestamp.toString());
+  const base_url = `https://api.binance.com`;// до этого была ссылка https://api.binance.com/api/v3/data
+  const end_point = `/api/v3/order?symbol=BTCUSDT&side=BUY&type=MARKET&timeInForce=GTC&quoteOrderQty=10&recvWindow=5000&timestamp=${Date.now()}`
+  const url = `${base_url}${end_point}`
+console.log(url)
+ const generateSignature = (queryString: string, apiSecret: string): string => {
+    return crypto.createHmac('sha256', apiSecret).update(queryString).digest('hex');
+  };
+  
+  const signature = generateSignature(url, apiSecret);
+  
 
-
-  const signature = generateSignature(params.toString());
-  params.append('signature', signature);
-
-  try {
-    const response = await fetch(Url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'X-MBX-APIKEY': apiKey,
-      },
-      body: params,
-    });
-    console.log("response")
-    console.log(response)
-    const data = await response.json();
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-
+  const headers = {
+    'X-MBX-APIKEY': apiKey,
+  //'Content-Type': 'application/json'
+  };
+  const response = await fetch(url, {
+    method: 'POST',
+    body: JSON.stringify({
+      "symbol": symbol,
+      "side": side,
+      "type": type,
+      "quoteOrderQty": quoteOrderQty,
+      //"price": price,
+      "timestamp": timestamp,
+      "timeInForce": timeInForce,
+      "recvWindow": recvWindow
+    }),
+    headers: headers
+  });
+  console.log('response',response);
+  console.log(response.json())
 };
 
-const fetchData = async () => {
-  try {
-    const response = await fetch(Url);
-    const data = await response.json();
-    console.log(data);
-    console.log("response")
-    console.log(response)
-  } catch (error) {
-    console.error(error);
-  }
-};
+
+ /*console.log(JSON.stringify({
+    symbol:'BTCUSDT',
+    side: 'BUY',
+    type: 'LIMIT',
+    quantity: '1',
+    price: '42000',
+    timestamp: Date.now(),
+    timeInForce:'GTC',
+    recvWindow: '5000'
+  }))*/
+
+ 
+
+
 
 (async () => {
   await placeSpotLimitOrder();
-  await fetchData()
 })();

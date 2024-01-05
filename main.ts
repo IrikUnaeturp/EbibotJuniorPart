@@ -1,8 +1,10 @@
-
+import * as ccxt from 'ccxt';
 import * as crypto from 'crypto';
+//import fetch from 'node-fetch'
 
+const creds = JSON.parse(fs.readFileSync('creds.json', 'utf8'));
 
-const client = ({
+const client = createBinanceClient ({
     apiKey: creds.key,
     apiSecret: creds.secret,
 });
@@ -10,42 +12,46 @@ const client = ({
 const placeSpotLimitOrder = async () => {
   const symbol = 'BTCUSDT';
   const side = 'BUY';
-  const type = 'LIMIT';
-  const timeInForce = 'GTC';
-  const quantity = '1';
-  const price = '45000';
+  const type = 'MARKET';
+  //const timeInForce = 'GTC';
+  //const quoteOrderQty = '10';
+  //const price = '4500';
   const recvWindow = '5000';
   const timestamp = Date.now();
 
-  const url = `https://api.binance.com/sapi/wss`;// до этого была ссылка https://api.binance.com/api/v3/data
-  console.log(url);
-  const generateSignature = (url, apiSecret)=> {
-    return crypto.createHmac('sha256', apiSecret).update(url).digest('hex');
+  const base_url = `https://api.binance.com`;// до этого была ссылка https://api.binance.com/api/v3/data
+  const end_point = `/api/v3/order`
+  const url = `${base_url}${end_point}`
+console.log(url)
+  const generateSignature = (queryString: string, apiSecret: string): string => {
+    return crypto.createHmac('sha256', apiSecret).update(queryString).digest('hex');
   };
   
   const signature = generateSignature(url, apiSecret);
-  console.log('Signature:', signature);
+  
 
   const headers = {
     'X-MBX-APIKEY': apiKey,
-    'Content-Type': 'application/json'
+  'Content-Type': 'application/json'
   };
-console.log('response')
   const response = await fetch(url, {
     method: 'POST',
-    headers: headers,
     body: JSON.stringify({
-    "symbol":'BTCUSDT',
-    "side": 'BUY',
-    "type": 'LIMIT',
-    "quantity": 1,
-    "price": 45000,
-    "timestamp": Date.now(),
-    "timeInForce":'GTC',
-    "recvWindow": 5000
-    })
+      "symbol": symbol,
+      "side": side,
+      "type": type,
+      //"quoteOrderQty": quoteOrderQty,
+      //"price": price,
+      "timestamp": timestamp,
+      //"timeInForce": timeInForce,
+      "recvWindow": recvWindow
+    }),
+    headers: headers
   });
-  console.log(response)
+  console.log('response',response);
+  console.log(response.json())
+};
+
 
  /*console.log(JSON.stringify({
     symbol:'BTCUSDT',
@@ -58,11 +64,9 @@ console.log('response')
     recvWindow: '5000'
   }))*/
 
-  /*const data = await response.json();
-  console.log("response data:");
- console.log(data);*/
+ 
 
-}
+
 
 (async () => {
   await placeSpotLimitOrder();
