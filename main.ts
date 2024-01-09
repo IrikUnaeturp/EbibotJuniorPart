@@ -1,70 +1,30 @@
-import * as ccxt from 'ccxt';
-import * as crypto from 'crypto';
-//import fetch from 'node-fetch'
+const { Spot } = require('@binance/connector')
 
 
 const apiKey = "xpW2DQ7XHjrHm9D113h53Du1vPuKfr8lsxT5LXGh6UvYVyp4zT7KXqEpeRNLy4k7";
 const apiSecret = "er0nlJSSFAt4cHhBWrue07jEw19kQXWMcfQbdPLmdd8SQwwkc0CsA0ZhSZF6bdcB";
 
-const placeSpotLimitOrder = async () => {
-  const symbol = 'BTCUSDT';
-  const side = 'BUY';
-  const type = 'MARKET';
-  //const timeInForce = 'GTC';
-  //const quoteOrderQty = '10';
-  //const price = '4500';
-  const recvWindow = '5000';
-  const timestamp = Date.now();
+const client = new Spot(apiKey, apiSecret,{
+  baseURL: 'https://api.binance.com'
+})
 
-  const base_url = `https://api.binance.com`;// до этого была ссылка https://api.binance.com/api/v3/data
-  const end_point = `/api/v3/order`
-  const url = `${base_url}${end_point}`
-console.log(url)
-  const generateSignature = (queryString: string, apiSecret: string): string => {
-    return crypto.createHmac('sha256', apiSecret).update(queryString).digest('hex');
-  };
-  
-  const signature = generateSignature(url, apiSecret);
-  
+//Инфа об аккаунте
+//client.account().then(response => client.logger.log(response.data))
 
-  const headers = {
-    'X-MBX-APIKEY': apiKey,
-  'Content-Type': 'application/json'
-  };
-  const response = await fetch(url, {
-    method: 'POST',
-    body: JSON.stringify({
-      "symbol": symbol,
-      "side": side,
-      "type": type,
-      //"quoteOrderQty": quoteOrderQty,
-      //"price": price,
-      "timestamp": timestamp,
-      //"timeInForce": timeInForce,
-      "recvWindow": recvWindow
-    }),
-    headers: headers
-  });
-  console.log('response',response);
-  console.log(response.json())
-};
+const placeMarketOrder = async () => {
+  const order = await client.newOrder('UNIUSDT','BUY','MARKET',{
+    quoteOrderQty: 1
+  })
+console.log(order.data)
+}
 
+const placeLimitOrder = async()=> {
+  const order = await client.newOrder('UNIUSDT','BUY', 'LIMIT',{
+    price: '5.90',
+    quantity: 1,
+    timeInForce: 'GTC'
+  })
+  console.log(order)
+}
 
- /*console.log(JSON.stringify({
-    symbol:'BTCUSDT',
-    side: 'BUY',
-    type: 'LIMIT',
-    quantity: '1',
-    price: '42000',
-    timestamp: Date.now(),
-    timeInForce:'GTC',
-    recvWindow: '5000'
-  }))*/
-
- 
-
-
-
-(async () => {
-  await placeSpotLimitOrder();
-})();
+placeLimitOrder()
