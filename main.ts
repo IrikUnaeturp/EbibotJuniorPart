@@ -1,8 +1,8 @@
 const { Spot } = require('@binance/connector')
 
 
-const apiKey = "xpW2DQ7XHjrHm9D113h53Du1vPuKfr8lsxT5LXGh6UvYVyp4zT7KXqEpeRNLy4k7";
-const apiSecret = "er0nlJSSFAt4cHhBWrue07jEw19kQXWMcfQbdPLmdd8SQwwkc0CsA0ZhSZF6bdcB";
+const apiKey = "";
+const apiSecret = "";
 
 const client = new Spot(apiKey, apiSecret,{
   baseURL: 'https://api.binance.com'
